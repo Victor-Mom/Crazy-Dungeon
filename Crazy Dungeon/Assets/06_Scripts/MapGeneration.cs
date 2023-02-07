@@ -93,7 +93,7 @@ public class MapGeneration : MonoBehaviour
         randomPerlinY = Random.value * 10000;
         for (int x = perlinSize.x; x > -a_cornersSize[1].x - perlinSize.x; x--)
         {
-            for (int y = -perlinSize.y; y < a_cornersSize[0].y + perlinSize.y; y++)
+            for (int y = -perlinSize.y; y < a_cornersSize[1].y + perlinSize.y; y++)
             {
                 if (Mathf.PerlinNoise(x + randomPerlinX, y + randomPerlinY) > m_data.CornerPerlinThreshold)
                 {
@@ -107,7 +107,7 @@ public class MapGeneration : MonoBehaviour
             Random.Range(m_data.MinCornerPerlinSize.y, m_data.MaxCornerPerlinSize.y));
         randomPerlinX = Random.value * 10000;
         randomPerlinY = Random.value * 10000;
-        for (int x = -perlinSize.x; x < a_cornersSize[0].x + perlinSize.x; x++)
+        for (int x = -perlinSize.x; x < a_cornersSize[2].x + perlinSize.x; x++)
         {
             for (int y = perlinSize.y; y > -a_cornersSize[2].y - perlinSize.y; y--)
             {
@@ -123,9 +123,9 @@ public class MapGeneration : MonoBehaviour
             Random.Range(m_data.MinCornerPerlinSize.y, m_data.MaxCornerPerlinSize.y));
         randomPerlinX = Random.value * 10000;
         randomPerlinY = Random.value * 10000;
-        for (int x = perlinSize.x; x > -a_cornersSize[1].x - perlinSize.x; x--)
+        for (int x = perlinSize.x; x > -a_cornersSize[3].x - perlinSize.x; x--)
         {
-            for (int y = perlinSize.y; y > -a_cornersSize[2].y - perlinSize.y; y--)
+            for (int y = perlinSize.y; y > -a_cornersSize[3].y - perlinSize.y; y--)
             {
                 if (Mathf.PerlinNoise(x + randomPerlinX, y + randomPerlinY) > m_data.CornerPerlinThreshold)
                 {
