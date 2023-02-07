@@ -12,5 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50163b41b2bbd3a41aa6e54ccd04103a, type: 3}
   m_Name: Game Data
   m_EditorClassIdentifier: 
+  m_minRoomSize: {x: 10, y: 10}
   m_maxRoomSize: {x: 40, y: 30}
-  m_baseShapeSize: {x: 10, y: 10}
+  m_minCornerPerlinSize: 3
+  m_maxCornerPerlinSize: 10
+  m_displayDebugPerlinOnTilemap: 0

@@ -611,4 +611,4 @@ MonoBehaviour:
   m_data: {fileID: 11400000, guid: 097d0310470ec8942bec6ac18c6fce26, type: 2}
   m_tilemap: {fileID: 1623989420}
   m_groundTile: {fileID: 11400000, guid: 73de363f6dfc5db419ebf29dcfd5cc32, type: 2}
-  m_perlinThreshold: 0.5
+  m_perlinTile: {fileID: 11400000, guid: 073c27f77671c334ca465d3aa8478b1e, type: 2}
