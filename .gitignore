@@ -77,3 +77,4 @@ crashlytics-build.properties
 *.log
 .DS_Store
 Crazy Dungeon/Assets/06_Scripts/Folder.DotSettings.user.meta
+Crazy Dungeon/.vsconfig
