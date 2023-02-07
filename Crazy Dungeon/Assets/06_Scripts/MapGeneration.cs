@@ -1,8 +1,14 @@
+using System;
 using System.Collections.Generic;
+
 using System.Data;
-using Unity.VisualScripting;
+
+using System.Linq;
+
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.Tilemaps;
+using Random = UnityEngine.Random;
 
 public class MapGeneration : MonoBehaviour
 {
@@ -11,6 +17,8 @@ public class MapGeneration : MonoBehaviour
     [SerializeField] private Tilemap m_tilemap;
     [SerializeField] private RuleTile m_groundTile;
     [SerializeField] private Tile m_tempTile;
+    public EType m_groundType;
+    public EType m_wallType;
 
     private void Start()
     {
@@ -19,6 +27,9 @@ public class MapGeneration : MonoBehaviour
 
     private void GenerateRoom()
     {
+        //Set type of wall and ground
+        SetRoomTypes();
+        
         // Generate random corner sizes
         List<Vector2Int> cornersSize = new List<Vector2Int>();
         for (int i = 0; i < 4; i++)
@@ -34,6 +45,21 @@ public class MapGeneration : MonoBehaviour
         {
             CellularModulation();
         }
+    }
+
+    private void SetRoomTypes()
+    {
+        var wallList = m_data.RuleTile.Where(r => r.obj == EObject.wall).ToList();
+        var groundList = m_data.RuleTile.Where(r => r.obj == EObject.ground).ToList();
+        
+        int randGroundType = Random.Range(0, groundList.Count()); // random to select ground type btw id in GameData
+        int randWallType = Random.Range(0, wallList.Count()); // random to select wall type btw id in GameData
+
+        m_groundTile.m_TilingRules[0].m_Sprites[0] = groundList[randGroundType].sprite;
+        m_groundTile.m_TilingRules[1].m_Sprites[0] = wallList[randWallType].sprite;
+
+        m_groundType = groundList[randGroundType].type;
+        m_wallType = wallList[randWallType].type;
     }
 
     private void GenerateCorners(List<Vector2Int> a_cornersSize)
@@ -144,7 +170,7 @@ public class MapGeneration : MonoBehaviour
 
     private void CellularModulation()
     {
-        //Sauvegarde de l'état de la map
+        //Sauvegarde de l'ï¿½tat de la map
         List<List<bool>> state = new List<List<bool>>();
         for (int x = -m_data.MaxRoomSize.x / 2; x < m_data.MaxRoomSize.x / 2; x++)
         {
@@ -198,7 +224,7 @@ public class MapGeneration : MonoBehaviour
                 }
             }
         }
-        //Changement d'état
+        //Changement d'ï¿½tat
         int tileX = -m_data.MaxRoomSize.x / 2;
         int tileY = -m_data.MaxRoomSize.y / 2;
         for (int x = 0; x < state.Count; x++)
