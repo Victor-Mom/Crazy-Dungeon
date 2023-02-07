@@ -1,6 +1,10 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.Tilemaps;
+using Random = UnityEngine.Random;
 
 public class MapGeneration : MonoBehaviour
 {
@@ -8,6 +12,8 @@ public class MapGeneration : MonoBehaviour
     
     [SerializeField] private Tilemap m_tilemap;
     [SerializeField] private RuleTile m_groundTile;
+    public EType m_groundType;
+    public EType m_wallType;
 
     private void Start()
     {
@@ -16,6 +22,9 @@ public class MapGeneration : MonoBehaviour
 
     private void GenerateRoom()
     {
+        //Set type of wall and ground
+        SetRoomTypes();
+        
         // Generate random corner sizes
         List<Vector2Int> cornersSize = new List<Vector2Int>();
         for (int i = 0; i < 4; i++)
@@ -24,9 +33,24 @@ public class MapGeneration : MonoBehaviour
                 Random.Range(m_data.MinRoomSize.x / 2, m_data.MaxRoomSize.x / 2),
                 Random.Range(m_data.MinRoomSize.y / 2, m_data.MaxRoomSize.y / 2)));
         }
-        
+
         GenerateCorners(cornersSize);
         GeneratePerlinNoise(cornersSize);
+    }
+
+    private void SetRoomTypes()
+    {
+        var wallList = m_data.RuleTile.Where(r => r.obj == EObject.wall).ToList();
+        var groundList = m_data.RuleTile.Where(r => r.obj == EObject.ground).ToList();
+        
+        int randGroundType = Random.Range(0, groundList.Count()); // random to select ground type btw id in GameData
+        int randWallType = Random.Range(0, wallList.Count()); // random to select wall type btw id in GameData
+
+        m_groundTile.m_TilingRules[0].m_Sprites[0] = groundList[randGroundType].sprite;
+        m_groundTile.m_TilingRules[1].m_Sprites[0] = wallList[randWallType].sprite;
+
+        m_groundType = groundList[randGroundType].type;
+        m_wallType = wallList[randWallType].type;
     }
 
     private void GenerateCorners(List<Vector2Int> a_cornersSize)

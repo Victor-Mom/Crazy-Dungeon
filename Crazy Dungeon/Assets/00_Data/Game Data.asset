@@ -12,5 +12,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50163b41b2bbd3a41aa6e54ccd04103a, type: 3}
   m_Name: Game Data
   m_EditorClassIdentifier: 
+  m_minRoomSize: {x: 10, y: 10}
   m_maxRoomSize: {x: 40, y: 30}
-  m_baseShapeSize: {x: 10, y: 10}
+  m_cornerPerlinThreshold: 0.55
+  m_minCornerPerlinSize: {x: 3, y: 3}
+  m_maxCornerPerlinSize: {x: 10, y: 10}
+  m_RuleTile:
+  - sprite: {fileID: 21300000, guid: 01a0cc5f6286746d1a3505acc2b822ef, type: 3}
+    obj: 0
+    type: 0
+  - sprite: {fileID: 21300000, guid: a0d215b9c31084e2b97d634d9a6c69bc, type: 3}
+    obj: 0
+    type: 1
+  - sprite: {fileID: 21300000, guid: 7f91485c350af4e10b2599454e136ba4, type: 3}
+    obj: 0
+    type: 2
+  - sprite: {fileID: 21300000, guid: fff10447baa86b44aa549f50f310265a, type: 3}
+    obj: 0
+    type: 2
+  - sprite: {fileID: 21300000, guid: 1d47679b938654497b892e438cf4ea1a, type: 3}
+    obj: 1
+    type: 4
+  - sprite: {fileID: 21300000, guid: df1e656b3eb6545859245ed52483dec7, type: 3}
+    obj: 1
+    type: 5
+  - sprite: {fileID: 21300000, guid: 44530988034464ad69114812b6599202, type: 3}
+    obj: 1
+    type: 6
+  - sprite: {fileID: 21300000, guid: a5c93e38ae4f34bf0841301e407c416e, type: 3}
+    obj: 1
+    type: 7
+  - sprite: {fileID: 21300000, guid: 3c7a004c57c50734dbb1e28a97b82e5c, type: 3}
+    obj: 1
+    type: 3
