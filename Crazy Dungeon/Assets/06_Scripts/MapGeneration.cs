@@ -43,12 +43,6 @@ public class MapGeneration : MonoBehaviour
     #endregion
 
     #endregion
-    
-    /// Todo : Remove when we can switch rooms
-    private void Start()
-    {
-        GenerateRoom();
-    }
 
     public void GenerateRoom()
     {
