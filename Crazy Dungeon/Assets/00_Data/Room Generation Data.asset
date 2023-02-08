@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1503885e8990c9c4a92ad1ecdc844420, type: 3}
+  m_Name: Room Generation Data
+  m_EditorClassIdentifier: 
+  m_minRoomSize: {x: 20, y: 20}
+  m_maxRoomSize: {x: 70, y: 40}
+  m_minCornerPerlinSize: 3
+  m_maxCornerPerlinSize: 6
+  m_cornerPerlinThreshold: 0.55
+  m_displayDebugPerlinOnTilemap: 1
+  m_displayDebugCellularOnTilemap: 0
+  m_cellularModulationCount: 6
+  m_trueTrue: 0.23
+  m_trueFalse: -0.06
+  m_falseFalse: 0.53
+  m_falseTrue: -0.1
+  m_groundTilesData:
+  - Sprite: {fileID: 21300000, guid: 01a0cc5f6286746d1a3505acc2b822ef, type: 3}
+    Effect: 0
+  - Sprite: {fileID: 21300000, guid: a0d215b9c31084e2b97d634d9a6c69bc, type: 3}
+    Effect: 1
+  - Sprite: {fileID: 21300000, guid: 7f91485c350af4e10b2599454e136ba4, type: 3}
+    Effect: 2
+  - Sprite: {fileID: 21300000, guid: fff10447baa86b44aa549f50f310265a, type: 3}
+    Effect: 3
+  m_wallTilesData:
+  - Sprite: {fileID: 21300000, guid: 1d47679b938654497b892e438cf4ea1a, type: 3}
+    Effect: 0
+  - Sprite: {fileID: 21300000, guid: 3c7a004c57c50734dbb1e28a97b82e5c, type: 3}
+    Effect: 1
+  - Sprite: {fileID: 21300000, guid: df1e656b3eb6545859245ed52483dec7, type: 3}
+    Effect: 2
+  - Sprite: {fileID: 21300000, guid: 44530988034464ad69114812b6599202, type: 3}
+    Effect: 3
+  - Sprite: {fileID: 21300000, guid: a5c93e38ae4f34bf0841301e407c416e, type: 3}
+    Effect: 4
