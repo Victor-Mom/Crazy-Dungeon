@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
@@ -12,8 +15,9 @@ public class MapGeneration : MonoBehaviour
     [SerializeField] private RoomGenerationData m_data;
     [SerializeField] private Tilemap m_tilemap;
     [SerializeField] private RuleTile m_ruleTile;
-    [SerializeField] private Tile m_perlinTile;
-    [SerializeField] private Tile m_cellularTile;
+    [SerializeField] private TileBase m_doorsTile;
+    [SerializeField] private TileBase m_perlinTile;
+    [SerializeField] private TileBase m_cellularTile;
 
     #endregion
     
@@ -52,10 +56,11 @@ public class MapGeneration : MonoBehaviour
         GenerateCornersNoise();
 
         CellularModulation();
+        GenerateDoors();
     }
 
     #region Private Methods
-    
+
     private void SetRoomEffects()
     {
         var groundTileData = m_data.GroundTilesData[Random.Range(0, m_data.GroundTilesData.Count)];
@@ -67,7 +72,7 @@ public class MapGeneration : MonoBehaviour
         m_ruleTile.m_TilingRules[GROUND].m_Sprites[0] = groundTileData.Sprite;
         m_ruleTile.m_TilingRules[WALL].m_Sprites[0] = wallTileData.Sprite;
     }
-    
+
     private void GenerateBaseShape()
     {
         // Generate base corners
@@ -114,7 +119,7 @@ public class MapGeneration : MonoBehaviour
     }
 
     #region Cellular Modulation
-    
+
     private void CellularModulation()
     {
         for (int i = 0; i < m_data.CellularModulationCount; i++)
@@ -124,7 +129,7 @@ public class MapGeneration : MonoBehaviour
             ApplyModulation(weights);
         }
     }
-    
+
     private void SaveMapState()
     {
         m_mapState = new List<List<bool>>();
@@ -138,17 +143,8 @@ public class MapGeneration : MonoBehaviour
             }
         }
     }
-
-    private List<Vector2Int> GetNeighborsList(int x, int y)
-    {
-        List<Vector2Int> neighbors = new List<Vector2Int>();
-        if (x > 0) { neighbors.Add(new Vector2Int(x - 1, y)); }
-        if (y > 0) { neighbors.Add(new Vector2Int(x, y - 1)); }
-        if (x < m_data.MaxRoomSize.x - 1) { neighbors.Add(new Vector2Int(x + 1, y)); }
-        if (y < m_data.MaxRoomSize.y - 1) { neighbors.Add(new Vector2Int(x, y + 1)); }
-        return neighbors;
-    }
     
+
     private List<List<float>> ComputeFashionWeights()
     {
         List<List<float>> weights = new List<List<float>>();
@@ -201,9 +197,19 @@ public class MapGeneration : MonoBehaviour
     #endregion
 
     #region Utils
-    
+    private List<Vector2Int> GetNeighborsList(int x, int y)
+    {
+        List<Vector2Int> neighbors = new List<Vector2Int>();
+        if (x > 0) { neighbors.Add(new Vector2Int(x - 1, y)); }
+        if (y > 0) { neighbors.Add(new Vector2Int(x, y - 1)); }
+        if (x < m_data.MaxRoomSize.x - 1) { neighbors.Add(new Vector2Int(x + 1, y)); }
+        if (y < m_data.MaxRoomSize.y - 1) { neighbors.Add(new Vector2Int(x, y + 1)); }
+        return neighbors;
+    }
+
     private List<Vector2Int> GetRandomVectorsForCorners(int min, int max) =>
         GetRandomVectorsForCorners(new Vector2Int(min, min), new Vector2Int(max, max));
+
     private List<Vector2Int> GetRandomVectorsForCorners(Vector2Int min, Vector2Int max)
     {
         int GetRandomSizeX() => Random.Range(min.x, max.x);
@@ -221,6 +227,81 @@ public class MapGeneration : MonoBehaviour
     }
 
     #endregion
-    
+
+    private void GenerateDoors()
+    {
+        //Random nb doors and place
+        List<Boolean> doorsPlace = new List<Boolean>(){false, false, false, false};
+        
+        //0 bottom ; 1 left ; 2 top ; 3 right
+        List<Vector3Int> directionDoors = new List<Vector3Int>()
+        {
+            new Vector3Int(0, -1),
+            new Vector3Int(-1, 0),
+            new Vector3Int(0, 1),
+            new Vector3Int(1, 0),
+        };
+
+        int doorStart = Mathf.FloorToInt(-m_data.DoorSize / 2);
+        int doorEnd = Mathf.CeilToInt(m_data.DoorSize / 2);
+        
+        while (doorsPlace.Count(d => d) < 2)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                doorsPlace[i] = Random.value > 0.5; //Random placement of the doors
+            }
+        }
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (!doorsPlace[i]) continue;
+            
+            Vector3Int curPos = (Vector3Int)m_data.MaxRoomSize * directionDoors[i];
+            bool doorIsEdged = false;
+            bool tunnelConnected = false;
+            int bound = (int)Vector3Int.Distance(Vector3Int.zero, (Vector3Int)m_data.MaxRoomSize * directionDoors[i]);
+            int j = bound;
+            
+            for (; !doorIsEdged; j--)
+            {
+                doorIsEdged = false;
+                curPos -= directionDoors[i];
+                
+                for (int y = doorStart; y < doorEnd; y++) //check if all doorTile is border or not
+                {
+                    var pos = new Vector3Int(curPos.x == 0 ? y : curPos.x, curPos.y == 0 ? y : curPos.y);
+                    if(m_tilemap.GetTile(pos) != null) { doorIsEdged = true; }
+                }
+            }
+            
+            //draw Door
+            for (int y = doorStart; y < doorEnd; y++)
+            {
+                var pos = new Vector3Int(curPos.x == 0 ? y : curPos.x, curPos.y == 0 ? y : curPos.y);
+                m_tilemap.SetTile(pos, m_doorsTile); // Draw door
+            }
+
+            Vector3Int dirBorder = new Vector3Int(Mathf.Abs(directionDoors[(i+1)%4].x), Mathf.Abs(directionDoors[(i+1)%4].y));
+            
+            m_tilemap.SetTile(curPos+dirBorder*(doorStart-1), m_ruleTile); // Draw border door
+            m_tilemap.SetTile(curPos+dirBorder*doorEnd, m_ruleTile); // Draw border door
+
+
+            for (; !tunnelConnected; j--) // draw tunnel
+            {
+                tunnelConnected = true;
+                curPos -= directionDoors[i];
+                
+                for (int y = doorStart-1; y < doorEnd+1; y++) //check if all doorTile is border or not
+                {
+                    var pos = new Vector3Int(curPos.x == 0 ? y : curPos.x, curPos.y == 0 ? y : curPos.y);
+                    if(m_tilemap.GetTile(pos) == null) { tunnelConnected = false; }
+                    m_tilemap.SetTile(pos, m_ruleTile);
+                }
+            }
+        }
+    }
+
     #endregion
 }
