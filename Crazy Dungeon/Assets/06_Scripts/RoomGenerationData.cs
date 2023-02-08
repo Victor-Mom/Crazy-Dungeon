@@ -57,9 +57,11 @@ public class RoomGenerationData : ScriptableObject
     [SerializeField, Range(0, 100)] private int m_cellularModulationCount = 5;
     [SerializeField] private FashionWeights m_fashionWeights;
     [SerializeField] private bool m_displayDebugCellularOnTilemap;
-    
+
     [Header("Doors Generation")]
-    [SerializeField] private int m_doorSize = 5;
+    [SerializeField] private bool m_debugDeactivateDoorGeneration;
+    [SerializeField, Range(0, 20)] private int m_doorSize = 5;
+    [SerializeField, Range(0f, 1f)] private float m_doorProbability = .5f;
 
     [Header("Tiles Data")]
     [SerializeField] private List<GroundTileData> m_groundTilesData = new List<GroundTileData>();
@@ -75,7 +77,11 @@ public class RoomGenerationData : ScriptableObject
     public int CellularModulationCount => m_cellularModulationCount;
     public float FashionWeight(bool tileFull, bool neighborFull) => m_fashionWeights.GetWeight(tileFull, neighborFull);
     public bool DisplayDebugCellularOnTilemap => m_displayDebugCellularOnTilemap;
+    public bool DebugDeactivateDoorGeneration => m_debugDeactivateDoorGeneration;
     public int DoorSize => m_doorSize;
+    public int DoorStart => Mathf.FloorToInt(-m_doorSize / 2);
+    public int DoorEnd => Mathf.CeilToInt(m_doorSize / 2);
+    public float DoorProbability => m_doorProbability;
     public List<GroundTileData> GroundTilesData => m_groundTilesData;
     public List<WallTileData> WallTilesData => m_wallTilesData;
 }

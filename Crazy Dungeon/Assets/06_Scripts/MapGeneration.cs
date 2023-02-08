@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NaughtyAttributes;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -48,15 +49,22 @@ public class MapGeneration : MonoBehaviour
 
     #endregion
 
+    [Button("Generate Room")]
     public void GenerateRoom()
     {
+        m_tilemap.ClearAllTiles();
+        
         SetRoomEffects();
 
         GenerateBaseShape();
         GenerateCornersNoise();
 
         CellularModulation();
-        GenerateDoors();
+
+        if (!m_data.DebugDeactivateDoorGeneration)
+        {
+            GenerateDoors();
+        }
     }
 
     #region Private Methods
@@ -144,7 +152,6 @@ public class MapGeneration : MonoBehaviour
         }
     }
     
-
     private List<List<float>> ComputeFashionWeights()
     {
         List<List<float>> weights = new List<List<float>>();
@@ -196,7 +203,115 @@ public class MapGeneration : MonoBehaviour
 
     #endregion
 
+    #region Door Placement
+    
+    private void GenerateDoors()
+    {
+        // 0 bottom ; 1 left ; 2 top ; 3 right
+        List<Vector2Int> doorsDirection = new List<Vector2Int>()
+        {
+            new Vector2Int(0, -1),
+            new Vector2Int(-1, 0),
+            new Vector2Int(0, 1),
+            new Vector2Int(1, 0),
+        };
+        
+        List<bool> doorsActive = ChoseActiveDoors();
+
+        for (int doorIndex = 0; doorIndex < 4; doorIndex++)
+        {
+            if (!doorsActive[doorIndex]) continue;
+            
+            // Find edge to place door
+            int doorPositionInDirection = FindFirstEdgeFromBorder(doorsDirection[doorIndex]);
+            
+            DrawDoor(doorsDirection[doorIndex], doorPositionInDirection * doorsDirection[doorIndex]);
+            DrawDoorConnectionToRoom(doorsDirection[doorIndex], doorPositionInDirection);
+        }
+    }
+
+    private List<bool> ChoseActiveDoors()
+    {
+        List<bool> doorsActive = new List<bool> {false, false, false, false};
+
+        // The first door is where the player enters and the second door is a first out door (at least one by room)
+        int enterDoorIndex = Random.Range(0, 4); /// TODO : Place the first door where the player enters the room
+        int firstOutDoor = enterDoorIndex;
+        while (firstOutDoor == enterDoorIndex)
+        {
+            firstOutDoor = Random.Range(0, 4);
+        }
+
+        doorsActive[enterDoorIndex] = true;
+        doorsActive[firstOutDoor] = true;
+
+        // Other doors are randomly activated
+        doorsActive.Where(d => !d).ToList().ForEach(d => d = Random.value > m_data.DoorProbability);
+        return doorsActive;
+    }
+
+    private int FindFirstEdgeFromBorder(Vector2Int a_direction)
+    {
+        int bound = (int)Vector2Int.Distance(Vector2Int.zero, m_data.MaxRoomSize * a_direction);
+        
+        for (int i = bound; i > 0; i--)
+        {
+            // Check for all tiles of door
+            for (int n = m_data.DoorStart; n < m_data.DoorEnd; n++)
+            {
+                // Reverse direction to get door direction (if direction is horizontal, door direction is vertical)
+                Vector2Int pos = a_direction * i + new Vector2Int(Mathf.Abs(a_direction.y) * n, Mathf.Abs(a_direction.x) * n);
+                
+                if (m_tilemap.GetTile((Vector3Int)pos) != null)
+                {
+                    return i;
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    private void DrawDoor(Vector2Int a_direction, Vector2Int a_doorPosition)
+    {
+        for (int i = m_data.DoorStart; i < m_data.DoorEnd; i++)
+        {
+            var pos = a_doorPosition + new Vector2Int(Mathf.Abs(a_direction.y) * i, Mathf.Abs(a_direction.x) * i);
+            m_tilemap.SetTile((Vector3Int)pos, m_doorsTile); // Draw door
+        }
+        
+        // Draw borders
+        Vector2Int borderDirections = new Vector2Int(Mathf.Abs(a_direction.y), Mathf.Abs(a_direction.x));
+        m_tilemap.SetTile((Vector3Int)(a_doorPosition + borderDirections * (m_data.DoorStart-1)), m_ruleTile);
+        m_tilemap.SetTile((Vector3Int)(a_doorPosition + borderDirections * m_data.DoorEnd), m_ruleTile);
+    }
+
+    private void DrawDoorConnectionToRoom(Vector2Int a_direction, int a_doorPositionInDirection)
+    {
+        for (int i = a_doorPositionInDirection - 1; i > 0; i--)
+        {
+            bool doorConnected = true;
+                
+            // Check for all door tiles
+            for (int n = m_data.DoorStart - 1; n < m_data.DoorEnd + 1; n++)
+            {
+                Vector2Int position = a_direction * i + new Vector2Int(Mathf.Abs(a_direction.y) * n, Mathf.Abs(a_direction.x) * n);
+                
+                if(m_tilemap.GetTile((Vector3Int)position) == null)
+                    doorConnected = false;
+                
+                m_tilemap.SetTile((Vector3Int)position, m_ruleTile);
+            }
+
+            if (doorConnected)
+                return;
+        }
+    }
+    
+    #endregion Door Placement
+    
     #region Utils
+    
     private List<Vector2Int> GetNeighborsList(int x, int y)
     {
         List<Vector2Int> neighbors = new List<Vector2Int>();
@@ -227,81 +342,6 @@ public class MapGeneration : MonoBehaviour
     }
 
     #endregion
-
-    private void GenerateDoors()
-    {
-        //Random nb doors and place
-        List<Boolean> doorsPlace = new List<Boolean>(){false, false, false, false};
-        
-        //0 bottom ; 1 left ; 2 top ; 3 right
-        List<Vector3Int> directionDoors = new List<Vector3Int>()
-        {
-            new Vector3Int(0, -1),
-            new Vector3Int(-1, 0),
-            new Vector3Int(0, 1),
-            new Vector3Int(1, 0),
-        };
-
-        int doorStart = Mathf.FloorToInt(-m_data.DoorSize / 2);
-        int doorEnd = Mathf.CeilToInt(m_data.DoorSize / 2);
-        
-        while (doorsPlace.Count(d => d) < 2)
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                doorsPlace[i] = Random.value > 0.5; //Random placement of the doors
-            }
-        }
-
-        for (int i = 0; i < 4; i++)
-        {
-            if (!doorsPlace[i]) continue;
-            
-            Vector3Int curPos = (Vector3Int)m_data.MaxRoomSize * directionDoors[i];
-            bool doorIsEdged = false;
-            bool tunnelConnected = false;
-            int bound = (int)Vector3Int.Distance(Vector3Int.zero, (Vector3Int)m_data.MaxRoomSize * directionDoors[i]);
-            int j = bound;
-            
-            for (; !doorIsEdged; j--)
-            {
-                doorIsEdged = false;
-                curPos -= directionDoors[i];
-                
-                for (int y = doorStart; y < doorEnd; y++) //check if all doorTile is border or not
-                {
-                    var pos = new Vector3Int(curPos.x == 0 ? y : curPos.x, curPos.y == 0 ? y : curPos.y);
-                    if(m_tilemap.GetTile(pos) != null) { doorIsEdged = true; }
-                }
-            }
-            
-            //draw Door
-            for (int y = doorStart; y < doorEnd; y++)
-            {
-                var pos = new Vector3Int(curPos.x == 0 ? y : curPos.x, curPos.y == 0 ? y : curPos.y);
-                m_tilemap.SetTile(pos, m_doorsTile); // Draw door
-            }
-
-            Vector3Int dirBorder = new Vector3Int(Mathf.Abs(directionDoors[(i+1)%4].x), Mathf.Abs(directionDoors[(i+1)%4].y));
-            
-            m_tilemap.SetTile(curPos+dirBorder*(doorStart-1), m_ruleTile); // Draw border door
-            m_tilemap.SetTile(curPos+dirBorder*doorEnd, m_ruleTile); // Draw border door
-
-
-            for (; !tunnelConnected; j--) // draw tunnel
-            {
-                tunnelConnected = true;
-                curPos -= directionDoors[i];
-                
-                for (int y = doorStart-1; y < doorEnd+1; y++) //check if all doorTile is border or not
-                {
-                    var pos = new Vector3Int(curPos.x == 0 ? y : curPos.x, curPos.y == 0 ? y : curPos.y);
-                    if(m_tilemap.GetTile(pos) == null) { tunnelConnected = false; }
-                    m_tilemap.SetTile(pos, m_ruleTile);
-                }
-            }
-        }
-    }
 
     #endregion
 }
