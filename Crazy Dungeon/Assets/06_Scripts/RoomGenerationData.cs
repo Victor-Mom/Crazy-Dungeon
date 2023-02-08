@@ -27,6 +27,19 @@ public class WallTileData : TileData
 
 #endregion
 
+[Serializable]
+struct FashionWeights
+{
+    [Range(-1f, 1f)] public float TileFullNeighborFull;
+    [Range(-1f, 1f)] public float TileFullNeighborEmpty;
+    [Range(-1f, 1f)] public float TileEmptyNeighborFull;
+    [Range(-1f, 1f)] public float TileEmptyNeighborEmpty;
+
+    public float GetWeight(bool tileFull, bool neighborFull) => tileFull
+        ? neighborFull ? TileFullNeighborFull : TileFullNeighborEmpty
+        : neighborFull ? TileEmptyNeighborFull : TileEmptyNeighborEmpty;
+}
+
 [CreateAssetMenu(menuName="CrazyDungeon/Room Generation Data")]
 public class RoomGenerationData : ScriptableObject
 {
@@ -42,10 +55,7 @@ public class RoomGenerationData : ScriptableObject
 
     [Header("Cellular Modulation")] 
     [SerializeField, Range(0, 100)] private int m_cellularModulationCount = 5;
-    [SerializeField, Range(-1f, 1f)] private float m_trueTrue = 0.1f;
-    [SerializeField, Range(-1f, 1f)] private float m_trueFalse = 0.1f;
-    [SerializeField, Range(-1f, 1f)] private float m_falseFalse = 0.1f;
-    [SerializeField, Range(-1f, 1f)] private float m_falseTrue = 0.1f;
+    [SerializeField] private FashionWeights m_fashionWeights;
     [SerializeField] private bool m_displayDebugCellularOnTilemap;
     
     [Header("Tiles Data")]
@@ -59,8 +69,7 @@ public class RoomGenerationData : ScriptableObject
     public float CornerPerlinThreshold => m_cornerPerlinThreshold;
     public bool DisplayDebugPerlinOnTilemap => m_displayDebugPerlinOnTilemap;
     public int CellularModulationCount => m_cellularModulationCount;
-    public float NeighborFullWeight(bool a_tileFull) => a_tileFull ? m_trueTrue : m_falseTrue;
-    public float NeighborEmptyWeight(bool a_tileFull) => a_tileFull ? m_trueFalse : m_falseFalse;
+    public float FashionWeight(bool tileFull, bool neighborFull) => m_fashionWeights.GetWeight(tileFull, neighborFull);
     public bool DisplayDebugCellularOnTilemap => m_displayDebugCellularOnTilemap;
     public List<GroundTileData> GroundTilesData => m_groundTilesData;
     public List<WallTileData> WallTilesData => m_wallTilesData;

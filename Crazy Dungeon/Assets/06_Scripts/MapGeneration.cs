@@ -165,14 +165,13 @@ public class MapGeneration : MonoBehaviour
             {
                 weights[x].Add(0f);
                 var neighbors = GetNeighborsList(x, y);
-
+                
                 // Apply weights
                 foreach (var neighbor in neighbors)
                 {
-                    if (m_mapState[neighbor.x][neighbor.y])
-                        weights[x][y] += m_data.NeighborFullWeight(m_mapState[x][y]);
-                    else
-                        weights[x][y] += m_data.NeighborEmptyWeight(m_mapState[x][y]);
+                    bool tileFull = m_mapState[x][y];
+                    bool neighborFull = m_mapState[neighbor.x][neighbor.y];
+                    weights[x][y] += m_data.FashionWeight(tileFull, neighborFull);
                 }
             }
         }

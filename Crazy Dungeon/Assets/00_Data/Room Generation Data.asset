@@ -17,13 +17,14 @@ MonoBehaviour:
   m_minCornerPerlinSize: 3
   m_maxCornerPerlinSize: 6
   m_cornerPerlinThreshold: 0.55
-  m_displayDebugPerlinOnTilemap: 1
-  m_displayDebugCellularOnTilemap: 0
+  m_displayDebugPerlinOnTilemap: 0
   m_cellularModulationCount: 6
-  m_trueTrue: 0.23
-  m_trueFalse: -0.06
-  m_falseFalse: 0.53
-  m_falseTrue: -0.1
+  m_fashionWeights:
+    TileFullNeighborFull: 0.23
+    TileFullNeighborEmpty: -0.06
+    TileEmptyNeighborFull: 0.53
+    TileEmptyNeighborEmpty: -0.1
+  m_displayDebugCellularOnTilemap: 0
   m_groundTilesData:
   - Sprite: {fileID: 21300000, guid: 01a0cc5f6286746d1a3505acc2b822ef, type: 3}
     Effect: 0
