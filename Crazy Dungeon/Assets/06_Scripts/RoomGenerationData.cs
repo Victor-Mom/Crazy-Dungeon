@@ -58,8 +58,12 @@ public class RoomGenerationData : ScriptableObject
     [SerializeField] private FashionWeights m_fashionWeights;
     [SerializeField] private bool m_displayDebugCellularOnTilemap;
     
+    [Header("Doors Generation")]
+    [SerializeField] private int m_doorSize = 5;
+
     [Header("Tiles Data")]
     [SerializeField] private List<GroundTileData> m_groundTilesData = new List<GroundTileData>();
+
     [SerializeField] private List<WallTileData> m_wallTilesData = new List<WallTileData>();
 
     public Vector2Int MinRoomSize => m_minRoomSize;
@@ -71,6 +75,7 @@ public class RoomGenerationData : ScriptableObject
     public int CellularModulationCount => m_cellularModulationCount;
     public float FashionWeight(bool tileFull, bool neighborFull) => m_fashionWeights.GetWeight(tileFull, neighborFull);
     public bool DisplayDebugCellularOnTilemap => m_displayDebugCellularOnTilemap;
+    public int DoorSize => m_doorSize;
     public List<GroundTileData> GroundTilesData => m_groundTilesData;
     public List<WallTileData> WallTilesData => m_wallTilesData;
 }
