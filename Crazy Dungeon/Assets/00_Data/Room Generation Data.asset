@@ -22,9 +22,12 @@ MonoBehaviour:
   m_fashionWeights:
     TileFullNeighborFull: 0.23
     TileFullNeighborEmpty: -0.06
-    TileEmptyNeighborFull: -0.09
-    TileEmptyNeighborEmpty: 0.55
+    TileEmptyNeighborFull: -0.1
+    TileEmptyNeighborEmpty: 0.53
   m_displayDebugCellularOnTilemap: 0
+  m_debugDeactivateDoorGeneration: 0
+  m_doorSize: 5
+  m_doorProbability: 0.5
   m_groundTilesData:
   - Sprite: {fileID: 21300000, guid: 01a0cc5f6286746d1a3505acc2b822ef, type: 3}
     Effect: 0
