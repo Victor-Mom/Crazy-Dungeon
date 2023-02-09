@@ -193,7 +193,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.08235294, g: 0.07450981, b: 0.15294118, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -362,6 +362,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1064403532}
   - component: {fileID: 1064403531}
+  - component: {fileID: 1064403534}
+  - component: {fileID: 1064403533}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
