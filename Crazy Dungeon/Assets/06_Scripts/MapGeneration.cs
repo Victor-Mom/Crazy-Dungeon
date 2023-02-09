@@ -65,6 +65,8 @@ public class MapGeneration : MonoBehaviour
         {
             GenerateDoors();
         }
+        
+        m_tilemap.RefreshAllTiles();
     }
 
     #region Private Methods
