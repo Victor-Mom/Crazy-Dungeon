@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using NaughtyAttributes;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
@@ -68,6 +66,28 @@ public class MapGeneration : MonoBehaviour
         
         m_tilemap.RefreshAllTiles();
     }
+    
+    [Button("Generate Perfect Room")]
+    public void GeneratePerfectRoom()
+    {
+        m_tilemap.ClearAllTiles();
+        
+        SetRoomEffects();
+
+        GenerateBaseShape(true);
+        GenerateCornersNoise();
+
+        CellularModulation();
+
+        if (!m_data.DebugDeactivateDoorGeneration)
+        {
+            GenerateDoors(true);
+        }
+        
+        m_tilemap.RefreshAllTiles();
+    }
+    
+    public bool IsTileADoor(Vector3Int a_tilePosition) => m_tilemap.GetTile(a_tilePosition) == m_doorsTile;
 
     #region Private Methods
 
@@ -85,10 +105,15 @@ public class MapGeneration : MonoBehaviour
         m_crazyTile.m_TilingRules[WALL].m_Sprites[0] = wallTileData.Sprite;*/
     }
 
-    private void GenerateBaseShape()
+    private void GenerateBaseShape(bool a_perfectShape = false)
     {
         // Generate base corners
         m_baseCornersSize = GetRandomVectorsForCorners(m_data.MinRoomSize / 2, m_data.MaxRoomSize / 2);
+
+        if (a_perfectShape)
+        {
+            m_baseCornersSize = GetRandomVectorsForCorners(m_data.MaxRoomSize / 2, m_data.MaxRoomSize / 2);
+        }
 
         for (int i = 0; i < s_corners.Count; i++)
         {
@@ -209,7 +234,7 @@ public class MapGeneration : MonoBehaviour
 
     #region Door Placement
     
-    private void GenerateDoors()
+    private void GenerateDoors(bool a_allDoors = false)
     {
         // 0 bottom ; 1 left ; 2 top ; 3 right
         List<Vector2Int> doorsDirection = new List<Vector2Int>()
@@ -221,6 +246,14 @@ public class MapGeneration : MonoBehaviour
         };
         
         List<bool> doorsActive = ChoseActiveDoors();
+
+        if (a_allDoors)
+        {
+            for (int i = 0; i < doorsActive.Count; i++)
+            {
+                doorsActive[i] = true;
+            }
+        }
 
         for (int doorIndex = 0; doorIndex < 4; doorIndex++)
         {

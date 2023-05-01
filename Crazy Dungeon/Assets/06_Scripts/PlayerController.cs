@@ -62,4 +62,16 @@ public class PlayerController : MonoBehaviour
 
         m_rigidbody.velocity = forwardVelocity + rightVelocity * m_driftFactor;
     }
+
+    private void OnCollisionEnter2D(Collision2D a_collision)
+    {
+        var collisionPoint = a_collision.GetContact(0).point;
+        Vector3Int tilePosition = new Vector3Int((int) collisionPoint.x, (int) collisionPoint.y, 0);
+
+        if (GameManager.Instance.IsTileADoor(tilePosition))
+        {
+            GameManager.Instance.GenerateNewRoom();
+            transform.position = Vector3.zero;
+        }
+    }
 }

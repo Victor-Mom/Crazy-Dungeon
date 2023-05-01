@@ -24,4 +24,19 @@ public class GameManager : MonoBehaviour
     [SerializeField] private MapGeneration m_mapGeneration;
 
     public GameplayData GameplayData => m_gameplayData;
+
+    private void Start()
+    {
+        m_mapGeneration.GeneratePerfectRoom();
+    }
+
+    public bool IsTileADoor(Vector3Int a_tilePosition)
+    {
+        return m_mapGeneration.IsTileADoor(a_tilePosition);
+    }
+
+    public void GenerateNewRoom()
+    {
+        m_mapGeneration.GenerateRoom();
+    }
 }
