@@ -66,7 +66,7 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D a_collision)
     {
         var collisionPoint = a_collision.GetContact(0).point;
-        Vector3Int tilePosition = new Vector3Int((int) collisionPoint.x, (int) collisionPoint.y, 0);
+        Vector3Int tilePosition = new Vector3Int(Mathf.FloorToInt(collisionPoint.x), Mathf.FloorToInt(collisionPoint.y), 0);
 
         if (GameManager.Instance.IsTileADoor(tilePosition))
         {
