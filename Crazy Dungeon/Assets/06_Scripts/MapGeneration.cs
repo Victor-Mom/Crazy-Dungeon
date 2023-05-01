@@ -15,7 +15,7 @@ public class MapGeneration : MonoBehaviour
     
     [SerializeField] private RoomGenerationData m_data;
     [SerializeField] private Tilemap m_tilemap;
-    [SerializeField] private RuleTile m_ruleTile;
+    [SerializeField] private CrazyTile m_crazyTile;
     [SerializeField] private TileBase m_doorsTile;
     [SerializeField] private TileBase m_perlinTile;
     [SerializeField] private TileBase m_cellularTile;
@@ -79,8 +79,10 @@ public class MapGeneration : MonoBehaviour
         m_groundEffect = groundTileData.Effect;
         m_wallEffect = wallTileData.Effect;
 
-        m_ruleTile.m_TilingRules[GROUND].m_Sprites[0] = groundTileData.Sprite;
-        m_ruleTile.m_TilingRules[WALL].m_Sprites[0] = wallTileData.Sprite;
+        m_crazyTile.SetEffects(m_groundEffect, m_wallEffect);
+        
+        /*m_crazyTile.m_TilingRules[GROUND].m_Sprites[0] = groundTileData.Sprite;
+        m_crazyTile.m_TilingRules[WALL].m_Sprites[0] = wallTileData.Sprite;*/
     }
 
     private void GenerateBaseShape()
@@ -94,7 +96,7 @@ public class MapGeneration : MonoBehaviour
             {
                 foreach (int y in Utils.Range(0, m_baseCornersSize[i].y))
                 {
-                    m_tilemap.SetTile(new Vector3Int(x, y, 0), m_ruleTile);
+                    m_tilemap.SetTile(new Vector3Int(x, y, 0), m_crazyTile);
                 }
             }
         }
@@ -112,14 +114,14 @@ public class MapGeneration : MonoBehaviour
                 {
                     if (x < -m_data.MaxRoomSize.x / 2 || x >= m_data.MaxRoomSize.x / 2 || 
                         y < -m_data.MaxRoomSize.y / 2 || y >= m_data.MaxRoomSize.y / 2 ||
-                        m_tilemap.GetTile(new Vector3Int(x, y, 0)) == m_ruleTile)
+                        m_tilemap.GetTile(new Vector3Int(x, y, 0)) == m_crazyTile)
                     {
                         continue;
                     }
                 
                     if (perlin.GetValueAt(x, y) >= m_data.CornerPerlinThreshold)
                     {
-                        m_tilemap.SetTile(new Vector3Int(x, y, 0), m_data.DisplayDebugPerlinOnTilemap ? m_perlinTile : m_ruleTile);
+                        m_tilemap.SetTile(new Vector3Int(x, y, 0), m_data.DisplayDebugPerlinOnTilemap ? m_perlinTile : m_crazyTile);
                     }
                 }
             }
@@ -180,7 +182,7 @@ public class MapGeneration : MonoBehaviour
 
     private void ApplyModulation(List<List<float>> a_weights)
     {
-        TileBase tileToDisplay = m_data.DisplayDebugCellularOnTilemap ? m_cellularTile : m_ruleTile;
+        TileBase tileToDisplay = m_data.DisplayDebugCellularOnTilemap ? m_cellularTile : m_crazyTile;
         
         for (int x = 0; x < m_data.MaxRoomSize.x; x++)
         {
@@ -284,8 +286,8 @@ public class MapGeneration : MonoBehaviour
         
         // Draw borders
         Vector2Int borderDirections = new Vector2Int(Mathf.Abs(a_direction.y), Mathf.Abs(a_direction.x));
-        m_tilemap.SetTile((Vector3Int)(a_doorPosition + borderDirections * (m_data.DoorStart-1)), m_ruleTile);
-        m_tilemap.SetTile((Vector3Int)(a_doorPosition + borderDirections * m_data.DoorEnd), m_ruleTile);
+        m_tilemap.SetTile((Vector3Int)(a_doorPosition + borderDirections * (m_data.DoorStart-1)), m_crazyTile);
+        m_tilemap.SetTile((Vector3Int)(a_doorPosition + borderDirections * m_data.DoorEnd), m_crazyTile);
     }
 
     private void DrawDoorConnectionToRoom(Vector2Int a_direction, int a_doorPositionInDirection)
@@ -302,7 +304,7 @@ public class MapGeneration : MonoBehaviour
                 if(m_tilemap.GetTile((Vector3Int)position) == null)
                     doorConnected = false;
                 
-                m_tilemap.SetTile((Vector3Int)position, m_ruleTile);
+                m_tilemap.SetTile((Vector3Int)position, m_crazyTile);
             }
 
             if (doorConnected)

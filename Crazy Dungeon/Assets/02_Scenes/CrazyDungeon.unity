@@ -172,6 +172,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_rigidbody: {fileID: 229074869}
+  m_accelerationFactor: 25
+  m_maxSpeed: 25
+  m_maxReverseSpeed: 15
+  m_turnFactor: 3.5
+  m_driftFactor: 0.93
+  m_turnControlByVelocityFactor: 0.1
+  m_maxDrag: 6
+  m_dragSpeed: 3
 --- !u!95 &229074868
 Animator:
   serializedVersion: 4
@@ -206,10 +214,10 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0.1
   m_GravityScale: 0
   m_Material: {fileID: 0}
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
@@ -16526,9 +16534,9 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: 73de363f6dfc5db419ebf29dcfd5cc32, type: 2}
   m_TileSpriteArray:
   - m_RefCount: 1404
-    m_Data: {fileID: 21300000, guid: a0d215b9c31084e2b97d634d9a6c69bc, type: 3}
+    m_Data: {fileID: 21300000, guid: 01a0cc5f6286746d1a3505acc2b822ef, type: 3}
   - m_RefCount: 164
-    m_Data: {fileID: 21300000, guid: a5c93e38ae4f34bf0841301e407c416e, type: 3}
+    m_Data: {fileID: 21300000, guid: 44530988034464ad69114812b6599202, type: 3}
   - m_RefCount: 0
     m_Data: {fileID: 0}
   - m_RefCount: 0
@@ -16756,7 +16764,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_data: {fileID: 11400000, guid: 097d0310470ec8942bec6ac18c6fce26, type: 2}
   m_tilemap: {fileID: 1623989420}
-  m_ruleTile: {fileID: 11400000, guid: 73de363f6dfc5db419ebf29dcfd5cc32, type: 2}
+  m_crazyTile: {fileID: 0}
   m_doorsTile: {fileID: 11400000, guid: 1f487748f9228403baba6130378fb279, type: 2}
   m_perlinTile: {fileID: 11400000, guid: 073c27f77671c334ca465d3aa8478b1e, type: 2}
   m_cellularTile: {fileID: 11400000, guid: 3d5b4f73bc1f1f74b92cc4b16d9fbb1e, type: 2}

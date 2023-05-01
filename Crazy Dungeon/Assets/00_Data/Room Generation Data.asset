@@ -16,7 +16,7 @@ MonoBehaviour:
   m_maxRoomSize: {x: 70, y: 40}
   m_minCornerPerlinSize: 3
   m_maxCornerPerlinSize: 6
-  m_cornerPerlinThreshold: 0.55
+  m_cornerPerlinThreshold: 0.3
   m_displayDebugPerlinOnTilemap: 0
   m_cellularModulationCount: 6
   m_fashionWeights:
